@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vendor Orders - Train Food Order</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #eef7ee;
+      margin: 0;
+    }
+    /* Top Navbar */
+    .top-navbar {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: #fff;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .top-navbar .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+    }
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 250px;
+      height: calc(100vh - 56px);
+      background-color: #27ae60;
+      padding-top: 20px;
+      overflow-y: auto;
+    }
+    .sidebar a {
+      display: block;
+      padding: 12px 20px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background-color: #1e8449;
+      color: #f1c40f;
+    }
+    /* Main Content */
+    .content {
+      margin-top: 56px;
+      margin-left: 250px;
+      padding: 20px;
+      background-color: #fff;
+      min-height: calc(100vh - 56px);
+    }
+    /* Orders Table Styling */
+.orders-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.orders-table thead th {
+  background-color: #27ae60;
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.orders-table tbody tr {
+  border-bottom: 1px solid #ddd;
+  transition: background-color 0.3s;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #f4f9f4;
+}
+
+.orders-table td {
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Improve Dropdown Select */
+.orders-table select {
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+/* Improve Action Button */
+.orders-table .btn-primary {
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  .orders-table thead {
+    display: none;
+  }
+
+  .orders-table tbody tr {
+    display: block;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .orders-table td {
+    display: block;
+    text-align: right;
+    padding: 5px 10px;
+    font-size: 14px;
+    position: relative;
+  }
+
+  .orders-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    font-weight: bold;
+    color: #27ae60;
+    text-align: left;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <nav class="top-navbar d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+    <div class="brand fw-bold">Vendor Dashboard</div>
+    <div class="d-flex align-items-center">
+      <div class="me-3">Welcome, {{ vendor.name }}</div>
+      <div class="notification dropdown">
+        <a
+          class="text-white position-relative"
+          href="#"
+          id="notificationDropdown"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-bell-fill" style="font-size: 1.5rem"></i>
+          {% if notifications_count > 0 %}
+          <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+            {{ notifications_count }}
+          </span>
+          {% endif %}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+          <li class="dropdown-header">Notifications</li>
+          {% for notification in notifications %}
+          <li>
+            <a class="dropdown-item" href="{{ notification.link }}">
+              {{ notification.message }}
+            </a>
+          </li>
+          {% empty %}
+          <li><span class="dropdown-item">No new notifications</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+      <div class="sidebar">
+        <a href="{% url 'vendor_dashboard' %}" class="active"
+          ><i class="bi bi-house-door-fill me-2"></i>Dashboard</a
+        >
+        <a href="{% url 'vendor_food_list' %}"
+          ><i class="bi bi-card-list me-2"></i>Food List</a
+        >
+        <a href="{% url 'vendor_add_food' %}"
+          ><i class="bi bi-plus-circle me-2"></i>Add Food</a
+        >
+        <a href="{% url 'vendor_order_list' %}"
+          ><i class="bi bi-receipt me-2"></i>Order List</a
+        >
+        <a href="/vendors/vendor_logout"
+          ><i class="bi bi-box-arrow-right me-2"></i>Logout</a
+        >
+      </div>
+  
+
+  <!-- Main Content -->
+  <div class="content">
+    <h3>Order List</h3>
+
+    <!-- Orders Table -->
+    <div class="mt-4">
+      <table class="table orders-table">
+        <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Food Item</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr>
+              <td data-label="Order ID">{{ order.id }}</td>
+              <td data-label="Customer">{{ order.user.username }}</td>
+              <td data-label="Food Item">{{ order.food_item.name }}</td>
+              <td data-label="Date">{{ order.order_time }}</td>
+              <td data-label="Total">₹{{ order.total_price }}</td>
+              <td data-label="Status">{{ order.status }}</td>
+              <td data-label="Action">
+                <form action="{% url 'update_order_status' order.id %}" method="post">
+                  {% csrf_token %}
+                  <select name="status" class="form-select form-select-sm">
+                    {% for choice in order.STATUS_CHOICES %}
+                    <option value="{{ choice.0 }}" {% if order.status == choice.0 %}selected{% endif %}>
+                      {{ choice.1 }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn btn-sm btn-primary mt-2">Update</button>
+                </form>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center">No orders found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          
+          
+      </table>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

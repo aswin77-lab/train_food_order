@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit Food Item - Vendor Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #eef7ee;
+      margin: 0;
+    }
+    /* Top Navbar */
+    .top-navbar {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: #fff;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .top-navbar .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+    }
+    .top-navbar .notification {
+      position: relative;
+    }
+    .top-navbar .notification .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #f1c40f;
+      color: #27ae60;
+      border-radius: 50%;
+      padding: 3px 7px;
+      font-size: 0.75rem;
+    }
+    .top-navbar .notification .dropdown-menu {
+      right: 0;
+      left: auto;
+      width: 300px;
+    }
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 56px; /* height of navbar */
+      left: 0;
+      width: 250px;
+      height: calc(100vh - 56px);
+      background-color: #27ae60;
+      padding-top: 20px;
+      overflow-y: auto;
+    }
+    .sidebar a {
+      display: block;
+      padding: 12px 20px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background-color: #1e8449;
+      color: #f1c40f;
+    }
+    /* Main Content */
+    .content {
+      margin-top: 56px;
+      margin-left: 250px;
+      padding: 20px;
+      background-color: #fff;
+      min-height: calc(100vh - 56px);
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+      .content {
+        margin-left: 0;
+      }
+    }
+    /* Form Container for Edit Food Item */
+    .form-container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-navbar d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+    <div class="brand fw-bold">Vendor Dashboard</div>
+    <div class="d-flex align-items-center">
+      <div class="me-3">Welcome, {{ vendor.name }}</div>
+      <div class="notification dropdown">
+        <a
+          class="text-white position-relative"
+          href="#"
+          id="notificationDropdown"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-bell-fill" style="font-size: 1.5rem"></i>
+          {% if notifications_count > 0 %}
+          <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+            {{ notifications_count }}
+          </span>
+          {% endif %}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+          <li class="dropdown-header">Notifications</li>
+          {% for notification in notifications %}
+          <li>
+            <a class="dropdown-item" href="{{ notification.link }}">
+              {{ notification.message }}
+            </a>
+          </li>
+          {% empty %}
+          <li><span class="dropdown-item">No new notifications</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  
+  <div class="sidebar">
+    <a href="{% url 'vendor_dashboard' %}" class="active"
+      ><i class="bi bi-house-door-fill me-2"></i>Dashboard</a
+    >
+    <a href="{% url 'vendor_food_list' %}"
+      ><i class="bi bi-card-list me-2"></i>Food List</a
+    >
+    <a href="{% url 'vendor_add_food' %}"
+      ><i class="bi bi-plus-circle me-2"></i>Add Food</a
+    >
+    <a href="{% url 'vendor_order_list' %}"
+      ><i class="bi bi-receipt me-2"></i>Order List</a
+    >
+    <a href="/vendors/vendor_logout"
+      ><i class="bi bi-box-arrow-right me-2"></i>Logout</a
+    >
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <h3>Edit Food Item</h3>
+    <div class="form-container">
+      <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="name" class="form-label">Food Name</label>
+          <input type="text" name="name" id="name" class="form-control" value="{{ food_item.name }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label">Price</label>
+          <input type="number" step="0.01" name="price" id="price" class="form-control" value="{{ food_item.price }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="quantity" class="form-label">Quantity</label>
+          <input type="number" name="quantity" id="quantity" class="form-control" value="{{ food_item.quantity }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Food Image</label>
+          <input type="file" name="image" id="image" class="form-control">
+          {% if food_item.image %}
+            <img src="{{ food_item.image.url }}" alt="{{ food_item.name }}" width="100" class="mt-2">
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Food Item</button>
+      </form>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
