@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search Food - Train Food Order</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #6B1E8A;  /* Deep Plum */
+      --secondary-color: #D4AF37; /* Gold */
+      --background-color: #F7F4F1; /* Off-white */
+      --text-color: #5a4d41;      /* Warm brown */
+    }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: var(--background-color);
+      margin: 0;
+      color: var(--text-color);
+    }
+    /* Top Navbar */
+    .top-navbar {
+      background: var(--primary-color);
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--background-color) !important;
+    }
+    .navbar-nav .nav-link {
+      color: var(--background-color) !important;
+      margin-right: 20px;
+      font-weight: 600;
+    }
+    .navbar-nav .nav-link:hover {
+      color: var(--secondary-color) !important;
+    }
+    /* Main Content Layout */
+    .content {
+      padding: 40px 20px;
+      margin-top: 56px; /* Navbar height */
+    }
+    /* Search Form Styling */
+    .search-form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    /* Results Table Styling */
+    .results-table thead th {
+      background-color: var(--primary-color);
+      color: var(--background-color);
+    }
+    .results-table tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-navbar">
+    <div class="container d-flex justify-content-between">
+      <a class="navbar-brand" href="#">Train Food Order</a>
+      <ul class="navbar-nav d-flex flex-row">
+        <li class="nav-item"><a class="nav-link" href="/users/trip_detail">Trip details</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/trip_search_results">Book Trip</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/search_food_by_pnr">Search Food</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/user_order_list">Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/user_logout">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="content container mt-5">
+    <!-- Django Messages Section -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Search Form -->
+    <div class="search-form">
+      <h3>Search Food by PNR</h3>
+      <form action="{% url 'search_food_by_pnr' %}" method="get">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="pnr" class="form-label">Enter your PNR</label>
+          <input type="text" name="pnr" id="pnr" class="form-control" placeholder="Enter PNR" value="{{ pnr }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+    </div>
+
+
+    {% if vendors %}
+    <div class="row">
+      {% for vendor in vendors %}
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ vendor.name }}</h5>
+            <p class="card-text">
+              Near Station: {{ vendor.near_station.name }}<br>
+              Phone: {{ vendor.phone }}<br>
+              Email: {{ vendor.email }}
+            </p>
+            <!-- Button to view vendor details or menu -->
+            <a href="{% url 'vendor_food_detail' vendor.id %}" class="btn btn-sm btn-primary">
+              View Menu
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No vendors found for your route.</p>
+  {% endif %}
+  
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

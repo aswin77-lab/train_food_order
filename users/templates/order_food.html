@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order Food - Train Food Order</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #6B1E8A;
+      --secondary-color: #D4AF37;
+      --background-color: #F7F4F1;
+      --text-color: #5a4d41;
+    }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: var(--background-color);
+      margin: 0;
+      color: var(--text-color);
+    }
+    /* Top Navbar */
+    .top-navbar {
+      background: var(--primary-color);
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--background-color) !important;
+    }
+    .navbar-nav .nav-link {
+      color: var(--background-color) !important;
+      margin-right: 20px;
+      font-weight: 600;
+    }
+    .navbar-nav .nav-link:hover {
+      color: var(--secondary-color) !important;
+    }
+    /* Main Content Layout */
+    .content {
+      padding: 40px 20px;
+      margin-top: 56px;
+    }
+    .order-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navbar -->
+  <nav class="top-navbar">
+    <div class="container d-flex justify-content-between">
+      <a class="navbar-brand" href="#">Train Food Order</a>
+      <ul class="navbar-nav d-flex flex-row">
+        <li class="nav-item"><a class="nav-link" href="/users/trip_detail">Trip details</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/trip_search_results">Book Trip</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/search_food_by_pnr">Search Food</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/user_order_list">Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/user_logout">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <!-- Main Content -->
+  <div class="content container mt-5">
+    <!-- Django Messages Section -->
+    {% if messages %}
+      {% for message in messages %}
+        <div style="color: red;" class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+    
+    <div class="order-card">
+      <h3>Order Food</h3>
+      <h4>{{ food_item.name }}</h4>
+      <p>
+        Price: ₹{{ food_item.price }}<br>
+        Available: {{ food_item.quantity }}
+      </p>
+      {% if food_item.image %}
+        <img src="{{ food_item.image.url }}" alt="{{ food_item.name }}" class="img-fluid mb-3">
+      {% endif %}
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="quantity" class="form-label">Quantity</label>
+          <!-- Add a data attribute for the price to use in JavaScript -->
+          <input type="number" name="quantity" id="quantity" class="form-control" placeholder="Enter quantity" required data-price="{{ food_item.price }}">
+        </div>
+        <p><strong>Total Amount:</strong> ₹<span id="totalAmount">0</span></p>
+        <button type="submit" class="btn btn-primary w-100">Place Order</button>
+      </form>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // JavaScript to update the total amount dynamically
+    document.getElementById('quantity').addEventListener('input', function() {
+      var quantity = parseInt(this.value) || 0;
+      var price = parseFloat(this.getAttribute('data-price')) || 0;
+      var totalAmount = quantity * price;
+      document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+    });
+  </script>
+</body>
+</html>

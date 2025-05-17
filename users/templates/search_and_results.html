@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Train Search - Book Trip - Train Food Order</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #6B1E8A;  /* Deep Plum */
+      --secondary-color: #D4AF37; /* Gold */
+      --background-color: #F7F4F1; /* Off-white */
+      --text-color: #5a4d41;      /* Warm brown */
+    }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: var(--background-color);
+      margin: 0;
+      color: var(--text-color);
+    }
+    /* Top Navbar */
+    .top-navbar {
+      background: var(--primary-color);
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--background-color) !important;
+    }
+    .navbar-nav .nav-link {
+      color: var(--background-color) !important;
+      margin-right: 20px;
+      font-weight: 600;
+    }
+    .navbar-nav .nav-link:hover {
+      color: var(--secondary-color) !important;
+    }
+    /* Main Content Layout */
+    .content {
+      padding: 40px 20px;
+      margin-top: 56px; /* Height of navbar */
+    }
+    /* Search Form Card */
+    .search-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    /* Table Styling */
+    .table thead th {
+      background-color: var(--primary-color);
+      color: var(--background-color);
+    }
+    .table tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+    @media (max-width: 768px) {
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navbar -->
+  <nav class="top-navbar">
+    <div class="container d-flex justify-content-between">
+      <a class="navbar-brand" href="#">Train Food Order</a>
+      <ul class="navbar-nav d-flex flex-row">
+        <li class="nav-item"><a class="nav-link" href="/users/trip_detail">Trip details</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/trip_search_results">Book Trip</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/search_food_by_pnr">Search Food</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/user_order_list">Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="/users/user_logout">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="content container mt-5">
+    <h3>Search for Trains</h3>
+    <!-- Search Form -->
+    <div class="search-card">
+      <form action="{% url 'trip_search_results' %}" method="get">
+        {% csrf_token %}
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="start_station" class="form-label">Start Station</label>
+            <select name="start_station" id="start_station" class="form-select" required>
+              <option value="">Select start station</option>
+              {% for station in stations %}
+              <option value="{{ station.id }}">{{ station.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="end_station" class="form-label">End Station</label>
+            <select name="end_station" id="end_station" class="form-select" required>
+              <option value="">Select end station</option>
+              {% for station in stations %}
+              <option value="{{ station.id }}">{{ station.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="travel_date" class="form-label">Travel Date</label>
+            <input type="date" name="travel_date" id="travel_date" class="form-control" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Search Trains</button>
+      </form>
+    </div>
+
+    <!-- Search Results (if any) -->
+    {% if train_routes %}
+    <div class="search-card">
+      <h4>Available Trains on {{ travel_date }}</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Train Number</th>
+            <th>Train Name</th>
+            <th>Departure</th>
+            <th>Arrival</th>
+            <th>Days</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for route in train_routes %}
+          <tr>
+            <td>{{ route.train_number }}</td>
+            <td>{{ route.train_name }}</td>
+            <td>{{ route.departure_time }}</td>
+            <td>{{ route.arrival_time }}</td>
+            <td>{{ route.days_of_operation }}</td>
+            <td>
+              <form action="{% url 'trip_book' route.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="travel_date" value="{{ travel_date }}">
+                <button type="submit" class="btn btn-sm btn-success">Book Trip</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% elif request.GET.start_station %}
+      <div class="alert alert-info">No trains found for the selected route on {{ travel_date }}.</div>
+    {% endif %}
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

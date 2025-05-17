@@ -1,0 +1,282 @@
+/* Global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Header and Footer */
+header, footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/* Button Styles */
+button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Input and Select Fields */
+input, select {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}
+
+input[type="text"]:focus, select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Menu Item Styles */
+.menu-item {
+    margin: 10px;
+}
+
+/* Login Form */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form input {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
+
+/* Signup Form */
+.signup-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 100%;
+    padding: 20px;
+    margin: auto;
+}
+
+.signup-form h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.signup-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.signup-form input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+.signup-form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.signup-form button:hover {
+    background-color: #45a049;
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 15px;
+    color: #666;
+}
+
+.signup-link a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #333;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #4CAF50 !important;
+}
+
+.navbar-toggler-icon {
+    background-color: #4CAF50;
+}
+
+/* Page Content */
+.container {
+    margin-top: 40px;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #333;
+    position: fixed; /* Fix the navbar to the top */
+    width: 100%; /* Ensure the navbar spans the entire width */
+    top: 0; /* Position the navbar at the top */
+    z-index: 9999; /* Ensure it stays on top of other content */
+    padding: 10px 0; /* Adjust padding for better spacing */
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #4CAF50 !important;
+}
+
+.navbar-toggler-icon {
+    background-color: #4CAF50;
+}
+
+/* Adjust content layout for the fixed navbar */
+body {
+    padding-top: 60px; /* Offset the content so it doesn't get hidden behind the navbar */
+}
+
+/* Page Content */
+.container {
+    margin-top: 40px;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    z-index: 9999; /* Ensure it stays at the bottom */
+}
+
+
+
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    color: #495057;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 600px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px;
+}
